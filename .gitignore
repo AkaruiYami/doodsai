@@ -1,7 +1,5 @@
 # Specifics
-settings.json
-settings.json.old
-tests.py
+tests/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
