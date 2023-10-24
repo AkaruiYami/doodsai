@@ -1,0 +1,33 @@
+[X] sperate movement from fps
+[ ] controlable environement class
+[ ] spawn food
+[ ] neural network brain for doods
+[ ] generation tracking
+[ ] gene tracking
+[ ] system for watching genes
+[ ] observable avoidance behavior
+[ ] observable food detection behavior
+[ ] Handle collision detection between doods & doods
+[ ] Handle collision detection between doods & food
+
+Dood Specific:
+[ ] Collision detection for food
+[ ] Collision detection for other doods
+[ ] Spawning capabilities based on variables and collision
+[ ] Fitness score
+[ ] Scaling attributes, size, speed, perception
+[ ] Color modulation based on attributes
+[X] Collison Mask
+
+Food specific:
+[X] Class needs to be coded
+[ ] Needs stages with energy variants based on growth stage
+[X] Growth based over delta time
+[X] Collision mask
+
+Environment Specifics:
+[ ] Manage Start Variables, number of doods, number of food, max food, max doods, food spawn rate
+[ ] Spawn Food
+[ ] Contain Doods
+[ ] Size variables
+[ ] Contain entities in future builds, ie rocks and stuff.
