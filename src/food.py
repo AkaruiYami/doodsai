@@ -18,6 +18,7 @@ class Food(pygame.sprite.Sprite):
         self._speed:float = growth_speed
         self._growth:float = 0.0
         self._last_update:float = time.perf_counter()
+        self._energy:int = 1
         
     def render(self) -> None:
         image:pygame.image = self.base_image
@@ -48,6 +49,12 @@ class Food(pygame.sprite.Sprite):
 
     def grow(self, deltatime) -> None:
         self._growth += self._speed * deltatime * self._speed_mult
+        
+        if self._growth == 1.0: self._energy = 40
+        elif self._growth >= 0.75: self._energy = 30
+        elif self._growth >= 0.50: self._energy = 20
+        elif self._growth >= 0.25: self._energy = 10
+        
         if self._growth > 1.0: self._growth = 1.0
     
     def drawMask(self) -> None:
@@ -82,3 +89,6 @@ class Food(pygame.sprite.Sprite):
     
     def getPos(self) -> tuple:
         return ((self.base_image.get_width()/2) + self.pos_x, (self.base_image.get_height()/2) + self.pos_y)
+    
+    def getEnergy(self) -> int:
+        return self._energy

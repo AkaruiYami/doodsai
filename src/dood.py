@@ -26,15 +26,7 @@ class Dood(pygame.sprite.Sprite):
         self._time_alive:float = 0.0
         
         self.last_update:float = time.perf_counter()
-        
-    def getPos(self) -> tuple:
-        return ((self.base_image.get_width()/2) + self.pos_x, (self.base_image.get_height()/2) + self.pos_y)
-    
-    def getRect(self) -> pygame.Rect:
-        self.rect.x = self.pos_x
-        self.rect.y = self.pos_y
-        return self.rect
-    
+            
     def render(self) -> (pygame.image, pygame.Surface):
         rotated_image:pygame.image = pygame.transform.rotate(self.base_image, self.state_direction)
         new_rect:pygame.Rect = rotated_image.get_rect(center=self.base_image.get_rect(center=((self.base_image.get_width()/2) + self.pos_x, (self.base_image.get_height()/2) + self.pos_y)).center)
@@ -67,6 +59,14 @@ class Dood(pygame.sprite.Sprite):
     def turnRight(self, deltatime:float) -> None:
         self.state_direction -= (self.attrib_speed / 2) * deltatime * self._speed_mult
         if self.state_direction <= 0.01: self.state_direction += 360
+
+    def getPos(self) -> tuple:
+        return ((self.base_image.get_width()/2) + self.pos_x, (self.base_image.get_height()/2) + self.pos_y)
+    
+    def getRect(self) -> pygame.Rect:
+        self.rect.x = self.pos_x
+        self.rect.y = self.pos_y
+        return self.rect
         
     def drawMask(self) -> None:
         rotated_image:pygame.image = pygame.transform.rotate(self.base_image, self.state_direction)

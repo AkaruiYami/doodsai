@@ -10,10 +10,13 @@ import pygame
 from pygame.locals import *
 from dood import Dood
 from food import Food
+import random
 
 ### PYGAME SETUP
 pygame.init()
-screen = pygame.display.set_mode((600, 600), DOUBLEBUF)
+screen_width = 600
+screen_height = 600
+screen = pygame.display.set_mode((screen_width, screen_height), DOUBLEBUF)
 clock = pygame.time.Clock()
 lock_fps = 30
 running  = True
@@ -27,8 +30,8 @@ group_doods = pygame.sprite.Group()
 group_foods = pygame.sprite.Group()
 doods = []
 foods = []
-doods.append(Dood(pos=(300, 300), speed_mult=5.0))
-foods.append(Food(pos=(30, 30), speed_mult=5.0))
+# doods.append(Dood(pos=(300, 300), speed_mult=5.0))
+# foods.append(Food(pos=(30, 30), speed_mult=5.0))
 
 ### RENDER
 def renderFrame():
@@ -44,7 +47,7 @@ def renderFrame():
         if DEBUG_DRAWCOLLISON_MASKS:
             screen.blit(food.drawMask(), render_food[1])
 
-    #Render Foods
+    #Render Doods
     for dood in doods:
         render_dood = dood.render()
         screen.blit(render_dood[0], render_dood[1])
@@ -52,6 +55,12 @@ def renderFrame():
             pygame.draw.rect(screen, (255, 255, 0), dood.getRect(), 1)
         if DEBUG_DRAWCOLLISON_MASKS:
             screen.blit(dood.drawMask(), render_dood[1])
+
+### COLLISIONS
+def collisionHandler():
+    # for dood in doods:
+    #     check = dood.getMask
+    pass        
 
 ### UPDATES
 def update(deltatime):
@@ -62,7 +71,17 @@ def update(deltatime):
     for dood in doods:
         dood.update(deltatime)
 
+### STARTUP
+def populate(num_foods:int, num_doods:int, speed_mult:float=1.0) -> None:
+    #create foods
+    for i in range(num_foods):
+        foods.append(Food(pos=(random.randint(0, screen_width), random.randint(0, screen_height)), speed_mult=speed_mult))
+    #create doods
+    for i in range(num_doods):
+       doods.append(Dood(pos=(random.randint(0, screen_width), random.randint(0, screen_height)), speed_mult=5.0))
+
 # MAIN LOOP
+populate(30, 10, 5.0)
 while running:
     # Check for Events
     for event in pygame.event.get():
