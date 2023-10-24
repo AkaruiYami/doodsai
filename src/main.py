@@ -6,11 +6,11 @@
 import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import time
+import random
 import pygame
 from pygame.locals import *
 from dood import Dood
 from food import Food
-import random
 
 ### PYGAME SETUP
 pygame.init()
@@ -30,8 +30,6 @@ group_doods = pygame.sprite.Group()
 group_foods = pygame.sprite.Group()
 doods = []
 foods = []
-# doods.append(Dood(pos=(300, 300), speed_mult=5.0))
-# foods.append(Food(pos=(30, 30), speed_mult=5.0))
 
 ### RENDER
 def renderFrame():
@@ -58,8 +56,8 @@ def renderFrame():
 
 ### COLLISIONS
 def collisionHandler():
-    # for dood in doods:
-    #     check = dood.getMask
+    for dood in doods:
+        check = dood.getMask()
     pass        
 
 ### UPDATES
