@@ -13,8 +13,8 @@ class Dood(Entity):
         self._speed_mult:float = speed_mult
 
         self.attrib_speed:float = 2.0
-        self.attrib_sense:float = 1.0
         self.attrib_size:float = 1.0
+        self.attrib_sense:float = 1.0
         
         self._time_alive:float = 0.0
         
