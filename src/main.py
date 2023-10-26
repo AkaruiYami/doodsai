@@ -68,24 +68,16 @@ def renderFrame():
             pygame.draw.circle(screen, obj['color'], obj['pos'], obj['radius'], obj['width'])
         
 
-## COLLISIONS
-def maskCollision(entityA:pygame.sprite.Sprite, entityB:pygame.sprite.Sprite):
-    rectA, maskA = entityA.getRect(), entityA.getMask()
-    rectB, maskB = entityB.getRect(), entityB.getMask()
-    offset_x = rectA.x - rectB.x
-    offset_y = rectA.y - rectB.y
-    collision = maskA.overlap(maskB, (offset_x, offset_y))
-    if collision:
-        print(f"{entityA} collided with {entityB}")
-    return collision if collision else None
 
 def collisionHandler():
-    for dood in doods:
-        close_food = pygame.sprite.spritecollideany(dood, foods)
-        if close_food:
-            collision = maskCollision(dood, close_food)
-            if collision:
-                close_food.alive = False
+    close_food = pygame.sprite.groupcollide(foods, doods, True, False, pygame.sprite.collide_mask)
+    if not close_food:
+        return
+
+    for food in close_food.keys():
+        print(f"Get eaten boiii! {food}")
+        food.alive = False
+
                 
 ### UPDATES
 def update(deltatime):

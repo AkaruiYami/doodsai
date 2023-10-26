@@ -5,13 +5,21 @@ class Entity(pygame.sprite.Sprite):
     def __init__(self):
         super(Entity, self).__init__()
         self.base_image:pygame.image = None
-        self.rect:pygame.Rect = None
+        self._rect:pygame.Rect = None
         self.base_mask:pygame.mask = None    
         self.pos_x:float = 0
         self.pos_y:float = 0
         self.angle:float = 0
         self.scale:tuple[int, int] = (0, 0)
         self.alive = True
+
+    @property
+    def mask(self):
+        return self.getMask()
+
+    @property
+    def rect(self):
+        return self.getRect()
 
     def setPos(self, pos:tuple[int, int]=(0, 0)) -> None:
         self.pos_x = pos[0]
@@ -28,7 +36,7 @@ class Entity(pygame.sprite.Sprite):
     
     def setImage(self, image:pygame.surface.Surface, scale:tuple[float, float]) -> None:
         self.base_image = pygame.transform.scale(image, (scale[0], scale[1]))
-        self.rect = self.base_image.get_rect()
+        self._rect = self.base_image.get_rect()
     
     def getScale(self) -> tuple[float, float]:
         return self.scale
