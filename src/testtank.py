@@ -21,7 +21,6 @@ clock = pygame.time.Clock()
 lock_fps = 30
 running  = True
 startup_cooldown = 1.0
-speed_mult=10.0
 
 ### DEBUG FLAGS
 DEBUG_DRAWRECTS = False
@@ -41,6 +40,7 @@ def addDebugObj(pos:tuple[float, float]=(0, 0), color:tuple[int, int, int]=(0, 0
 ### ENTITY LISTS
 doods = pygame.sprite.Group()
 foods = pygame.sprite.Group()
+garbage_insts = []
 
 def renderEntity(inst):
     entity = inst.render()
@@ -70,11 +70,20 @@ def renderFrame():
 
 ## COLLISIONS
 def maskCollision(entityA:pygame.sprite.Sprite, entityB:pygame.sprite.Sprite):
-    rectA, maskA = entityA.getRect(), entityA.getMask()
-    rectB, maskB = entityB.getRect(), entityB.getMask()
-    offset_x = rectA.x - rectB.x
-    offset_y = rectA.y - rectB.y
-    collision = maskA.overlap(maskB, (offset_x, offset_y))
+    offset_x = entityA.rect.x - entityB.rect.x
+    offset_y = entityA.rect.y - entityB.rect.y
+    collision = entityA.getMask().overlap(entityB.getMask(), (offset_x, offset_y))
+    
+    off_x = entityA.getPos()[0] - entityB.getPos()[0]
+    off_y = entityA.getPos()[1] - entityB.getPos()[1]
+    
+    pygame.draw.rect(screen, (0, 250, 0), entityA.rect, 1, 1)
+    pygame.draw.rect(screen, (0, 250, 250), entityB.rect, 1, 1)
+    new_surf = pygame.surface.Surface((50, 50))
+    new_surf.set_colorkey((0,0,0))
+    pygame.draw.rect(new_surf, (255, 255, 255), Rect(0, 0, 50, 50), 2, 1)
+    screen.blit(new_surf, (off_x, off_y))
+    
     if collision:
         print(f"{entityA} collided with {entityB}")
     return collision if collision else None
@@ -83,9 +92,9 @@ def collisionHandler():
     for dood in doods:
         close_food = pygame.sprite.spritecollideany(dood, foods)
         if close_food:
-            collision = maskCollision(dood, close_food)
-            if collision:
-                close_food.alive = False
+            if maskCollision(dood, close_food):
+                foods.remove(close_food)
+                
                 
 ### UPDATES
 def update(deltatime):
@@ -93,14 +102,14 @@ def update(deltatime):
     for food in foods:
         if food.alive:
             food.update(deltatime)
-            #food.rect = food.getRect()
+            food.rect = food.getRect()
         else:
             foods.remove(food)
     # Update Doods
     for dood in doods:
         if dood.alive:
             dood.update(deltatime)
-            #dood.rect = dood.getRect()
+            dood.rect = dood.getRect()
             
         else:
             doods.remove(dood)
@@ -110,21 +119,23 @@ def populate(num_foods:int, num_doods:int, speed_mult:float=1.0) -> None:
     #create foods
     for i in range(num_foods):
         new_food = Food(
-            pos=(random.randint(50, screen_width-50), random.randint(50, screen_height-50)),
+            pos=(screen_width/2, i * 10),
             speed_mult=speed_mult,
             scale=(16, 16))
         foods.add(new_food)
-        #addDebugObj(new_food.getPos(), (200, 200, 50))
+        new_food.rect= new_food.getRect()
+        addDebugObj(new_food.getPos(), (200, 200, 50))
     #create doods
     for i in range(num_doods):
        new_dood = Dood(
-           pos=(random.randint(50, screen_width-50), random.randint(50, screen_height-50)),
+           pos=(0, screen_height/2),
            speed_mult=speed_mult,
-           scale=(40, 40)) 
+           scale=(40, 40))
+       new_dood.rect = new_dood.getRect()
        doods.add(new_dood)
 
 # MAIN LOOP
-populate(50, 10, 5.0)
+populate(50, 1, 10.0)
 while running:
     perf = time.perf_counter()
     # Check for Events
@@ -148,14 +159,8 @@ while running:
     # Call updates
     update(time.perf_counter())
     # Handle Collisions
-    if startup_cooldown == 0:
-        collisionHandler()
-    else:
-        startup_cooldown -= perf
-        if startup_cooldown <= 0:
-            startup_cooldown = 0.0
-            print("Startup CD Finished")
-    
+    collisionHandler()
+
     # display to screen
     pygame.display.flip()
     clock.tick(lock_fps)

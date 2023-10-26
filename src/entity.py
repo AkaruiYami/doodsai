@@ -5,18 +5,18 @@ class Entity(pygame.sprite.Sprite):
     def __init__(self):
         super(Entity, self).__init__()
         self.base_image:pygame.image = None
-        self.base_rect:pygame.Rect = None
-        self.base_mask:pygame.mask = None
-        
+        self.rect:pygame.Rect = None
+        self.base_mask:pygame.mask = None    
         self.pos_x:float = 0
         self.pos_y:float = 0
         self.angle:float = 0
         self.scale:tuple[int, int] = (0, 0)
-        
+        self.alive = True
+
     def setPos(self, pos:tuple[int, int]=(0, 0)) -> None:
-        self.pos_x = pos[0] + (self.base_image.get_width()/2)
-        self.pos_y = pos[1] + (self.base_image.get_height()/2)
-    
+        self.pos_x = pos[0]
+        self.pos_y = pos[1]
+        
     def setAngle(self, angle) -> None:
         self.angle = angle if angle >= 360 and angle <= 0 else 0
     
@@ -26,9 +26,9 @@ class Entity(pygame.sprite.Sprite):
     def setScale(self, scale:tuple[int, int]) -> None:
         self.scale = scale
     
-    def setImage(self, image:pygame.surface.Surface) -> None:
-        self.base_image = image
-        self.base_rect = self.base_image.get_rect() 
+    def setImage(self, image:pygame.surface.Surface, scale:tuple[float, float]) -> None:
+        self.base_image = pygame.transform.scale(image, (scale[0], scale[1]))
+        self.rect = self.base_image.get_rect()
     
     def getScale(self) -> tuple[float, float]:
         return self.scale
@@ -40,8 +40,7 @@ class Entity(pygame.sprite.Sprite):
         return self.angle
 
     def getMask(self) -> pygame.mask:
-        image = self.getImage()
-        mask = pygame.mask.from_surface(image)
+        mask = pygame.mask.from_surface(self.getImage())
         return mask
     
     def getRect(self) -> pygame.Rect:
@@ -51,8 +50,8 @@ class Entity(pygame.sprite.Sprite):
             ).center)
 
     def getImage(self) -> pygame.surface.Surface:
-        image = pygame.transform.rotate(self.base_image, self.angle)
-        image = pygame.transform.scale(image, self.scale)
+        image = pygame.transform.scale(self.base_image, self.scale)
+        image = pygame.transform.rotate(image, self.angle)
         return image
     
     def render(self) -> tuple[pygame.Surface, pygame.Rect]:

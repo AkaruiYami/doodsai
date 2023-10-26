@@ -3,12 +3,11 @@ import time
 from entity import Entity
 
 class Food(Entity):
-    def __init__(self, pos:tuple=(0, 0), growth_speed:float=0.01, scale:tuple[int, int]=(32, 32), speed_mult:float=1.0) -> None:
+    def __init__(self, pos:tuple=(0, 0), growth_speed:float=0.01, scale:tuple[int, int]=(16, 16), speed_mult:float=1.0) -> None:
         super(Food, self).__init__()
-        self.setImage(pygame.image.load("./assets/food_v1-01.png"))
+        self.setImage(pygame.image.load("./assets/food_v1-01.png"), scale=scale)
         self.setScale(scale)        
-        self.pos_x:float = pos[0]
-        self.pos_y:float = pos[1]
+        self.setPos((pos[0], pos[1]))
         
         self._speed_mult:float = speed_mult
         self._speed:float = growth_speed

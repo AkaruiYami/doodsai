@@ -21,7 +21,7 @@ Dood Specific:
 
 Food specific:
 [X] Class needs to be coded
-[ ] Needs stages with energy variants based on growth stage
+[X] Needs stages with energy variants based on growth stage
 [X] Growth based over delta time
 [X] Collision mask
 
@@ -31,3 +31,7 @@ Environment Specifics:
 [ ] Contain Doods
 [ ] Size variables
 [ ] Contain entities in future builds, ie rocks and stuff.
+
+
+Collisions arent working properly,
+something to do with positions when created, offset is too much
