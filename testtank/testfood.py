@@ -6,13 +6,13 @@ from testentity import Entity
 class TestFood(Entity):
     def __init__(self, grow_rate:float=0.01, max_energy:int=50, scale:tuple[int, int]=(16, 16)):
         super(TestFood, self).__init__()
-        self.image = "./assets/food_v1-01.png"
         self.scale = scale
-        self.origin = self.center
+        self.image = "./assets/food_v1-01.png"
         self._max_energy:float = max_energy
         self._grow_rate:float = grow_rate
         self._growth:float = 0.0
         self._energy:float = 0
+        self.origin = self.center
 
     @property
     def growth(self):

@@ -25,6 +25,7 @@ fps_lock = 60
 ### DEBUG FLAGS
 DEBUG_DRAW_RECTS = True
 DEBUG_DRAW_COLLISION_MASKS = False
+DEBUG_DRAW_ORIGIN_POINT = True
 
 ### GROUPS
 doods = pygame.sprite.Group()
@@ -40,8 +41,16 @@ def renderEntity(entity) -> None:
         w, h = entity.image.get_width()+1, entity.image.get_height()+1
         rect_surf = pygame.surface.Surface(size=(w, h))
         rect_surf.set_colorkey((0, 0, 0))
-        pygame.draw.rect(rect_surf, (0, 255, 255), entity.rect, 1)
+        pygame.draw.rect(rect_surf, (0, 255, 255), entity._rect, 1)
         main_screen.blit(rect_surf, entity.center)
+    
+    if DEBUG_DRAW_ORIGIN_POINT:
+        rect_surf = pygame.surface.Surface(size=(3, 3))
+        rect_surf.set_colorkey((0, 0, 0))
+        pygame.draw.circle(rect_surf, (0, 255, 0), (1, 1), 1, 1)
+        main_screen.blit(rect_surf, entity.center)
+        
+    
     
 ### RENDERING    
 def render():
@@ -61,6 +70,16 @@ def update(timer):
         if dood.alive: dood.update(timer)
         else: doods.remove(dood)
 
+### COLLISION HANDLING
+def collisionHandler() -> None:
+    close_food = pygame.sprite.groupcollide(foods, doods, True, False, pygame.sprite.collide_mask)
+    if not close_food:
+        return
+    
+    for food in close_food.keys():
+        print(f"Get eaten boiiii! {food}")
+        food.alive = False
+
 ### STARTUP POPULATION
 def populate(num_foods:int=0, num_doods:int=0):
     for i in range(num_foods):
@@ -78,9 +97,25 @@ def populate(num_foods:int=0, num_doods:int=0):
                          random.randint(0, main_height - new_food.size[1]))
         doods.add(new_dood)
 
+def testPopulate():
+    for i in range(0, main_height, 15):
+        new_food = TestFood(
+            grow_rate=1.0,
+            max_energy=50
+        )
+        new_food.pos = (main_width/2 - new_food.size[0], i)
+        foods.add(new_food)
+    
+    testDood = TestDood(speed_mult=30.0)
+    testDood.pos = (main_width/2, main_height/2 - 3)
+    testDood.movingForward = True
+    testDood.movingLeft = True
+    doods.add(testDood)
+
 ### MAIN LOOP
 if __name__ == "__main__":
-    populate(num_foods=20, num_doods=10)
+    #populate(num_foods=20, num_doods=10)
+    testPopulate()
     while main_running:
         perf_timer = time.perf_counter()
         
@@ -94,9 +129,12 @@ if __name__ == "__main__":
                     DEBUG_DRAW_RECTS = not DEBUG_DRAW_RECTS
                 if event.key == K_2:
                     DEBUG_DRAW_COLLISION_MASKS = not DEBUG_DRAW_COLLISION_MASKS
+                if event.key == K_3:
+                    DEBUG_DRAW_ORIGIN_POINT = not DEBUG_DRAW_ORIGIN_POINT
         
         update(perf_timer)
         render()
+        collisionHandler()
         
         # Display screen
         pygame.display.flip()

@@ -11,6 +11,8 @@ class Entity(pygame.sprite.Sprite):
         self._origin:tuple[float, float] = (0, 0)
         self._angle:float = 0.0
         self._last_update:float = time.perf_counter()
+        self._rect = None
+        self.alive = True
     
     @property
     def size(self) -> tuple[int, int]:
@@ -48,22 +50,25 @@ class Entity(pygame.sprite.Sprite):
     
     @property
     def image(self) -> pygame.Surface:
-        image = pygame.transform.scale(self._base_image, self._scale)
-        image = pygame.transform.rotate(image, self._angle)
+        image = pygame.transform.rotate(self._base_image, self._angle)
+        self._rect = image.get_rect()
         return image
     
     @image.setter
     def image(self, image_path:str="") -> None:
         self._filepath = image_path
-        self._base_image = pygame.image.load(image_path).convert_alpha()
-        self._base_image = pygame.transform.scale(self._base_image, self.scale)
-        rescale_x = int(self._base_image.get_width() * self._scale[0])
-        rescale_y = int(self._base_image.get_height() * self._scale[1])
-        self._base_image = pygame.transform.scale(self._base_image, (rescale_x, rescale_y))
+        image = pygame.image.load(image_path).convert_alpha()
+        image = pygame.transform.scale(image, self.scale)
+        self._base_image = image
+        self._rect = image.get_rect()
     
     @property
     def rect(self) -> pygame.rect.Rect:
-        return self.image.get_rect(center=(self.image.get_width()/2, self.image.get_height()/2))
+        image = self.image
+        self._rect = image.get_rect()
+        return image.get_rect(center=image.get_rect(
+            center=self.center
+        ).center)
 
     @property
     def angle(self) -> float:
@@ -76,11 +81,11 @@ class Entity(pygame.sprite.Sprite):
 
     @property
     def mask(self) -> pygame.mask.Mask:
-        return pygame.mask.from_surface(pygame.transform.rotate(self._base_image, self._angle))
+        return pygame.mask.from_surface(pygame.transform.rotate(self.image, self._angle))
 
-    def drawMask(self, color:tuple[int, int, int, int]=(255, 0, 0, 255)):
-        image = pygame.transform.rotate(self._base_image, self._angle)
-        new_surf = pygame.surface.Surface((image.get_width(), image.get_height()))
+    def drawMask(self, color:tuple[int, int, int, int]=(255, 0, 0)) -> pygame.surface.Surface:
+        image = self.image
+        new_surf = pygame.surface.Surface(size=(image.get_width(), image.get_height()))
         mask = pygame.mask.from_surface(image)
         for y in range(mask.get_size()[1]):
             for x in range(mask.get_size()[0]):
