@@ -2,6 +2,7 @@
 #   testtank/testdood.py
 #
 from testentity import Entity
+from doodbrain import Brain
 import math
 
 class TestDood(Entity):
@@ -22,6 +23,15 @@ class TestDood(Entity):
         self._moving_backward:bool = False
         self._moving_left:bool = False
         self._moving_right:bool = False
+
+        # TODO Currently needing input callbacks and output callbacks
+        #   these will probably be defines as self._state_<whatevers>
+        #   ALSO probably need to start giving some states of awareness to process
+        
+        # Brain init
+        inputs = []
+        output = []
+        self._brain = Brain(connections=10)
     
     @property
     def movingForward(self) -> bool:
