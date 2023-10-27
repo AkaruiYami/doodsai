@@ -22,7 +22,7 @@ fps_clock = pygame.time.Clock()
 fps_lock = 60
 
 ### DEBUG FLAGS
-DEBUG_DRAW_RECTS = False
+DEBUG_DRAW_RECTS = True
 DEBUG_DRAW_COLLISION_MASKS = False
 
 ### GROUPS
@@ -30,19 +30,22 @@ doods = pygame.sprite.Group()
 foods = pygame.sprite.Group()
 
 def renderEntity(entity) -> None:
-    main_screen.blit(entity.image, entity.pos)
+    main_screen.blit(entity.image, entity.center)
+    
     if DEBUG_DRAW_COLLISION_MASKS:
-        main_screen.blit(entity.drawMask(), entity.pos)
+        main_screen.blit(entity.drawMask(), entity.center)
+        
     if DEBUG_DRAW_RECTS:
         w, h = entity.image.get_width(), entity.image.get_height()
         rect_surf = pygame.surface.Surface(size=(w, h))
         rect_surf.set_colorkey((0, 0, 0))
-        pygame.draw.rect(rect_surf, (0, 255, 255), entity.rect, 1, 1)
-        main_screen.blit(rect_surf, entity.pos)
+        pygame.draw.rect(rect_surf, (0, 255, 255), entity.rect, 2, 1)
+        main_screen.blit(rect_surf, entity.center)
     
 ### RENDERING    
 def render():
     main_screen.fill((45, 45, 45))
+    
     for food in foods:
         renderEntity(food)
     for dood in doods:
@@ -61,14 +64,16 @@ def update(timer):
 def populate(num_foods:int=20):
     for i in range(num_foods):
         new_food = TestFood(
-            grow_rate=1.0,
+            grow_rate=0.1,
             max_energy=50,
         )
+        new_food.pos = (random.randint(0, main_width - new_food.size[0]),
+                        random.randint(0, main_height - new_food.size[1]))
         foods.add(new_food)
 
 ### MAIN LOOP
 if __name__ == "__main__":
-    populate(num_foods=20)
+    populate(num_foods=40)
     while main_running:
         perf_timer = time.perf_counter()
         

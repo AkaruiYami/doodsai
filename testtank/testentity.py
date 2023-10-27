@@ -1,4 +1,5 @@
 import pygame
+import time
 
 class Entity(pygame.sprite.Sprite):
     def __init__(self, position:tuple[int, int]=(0, 0), scale:tuple[int, int]=(32, 32)):
@@ -9,8 +10,12 @@ class Entity(pygame.sprite.Sprite):
         self._pos:tuple[int, int] = position
         self._origin:tuple[float, float] = (0, 0)
         self._angle:float = 0.0
-        self._last_update:float = 0.0
-         
+        self._last_update:float = time.perf_counter()
+    
+    @property
+    def size(self) -> tuple[int, int]:
+         return (self.image.get_width(), self.image.get_height())
+        
     @property
     def pos(self) -> tuple[int, int]:
         return self._pos
@@ -18,6 +23,12 @@ class Entity(pygame.sprite.Sprite):
     @pos.setter       
     def pos(self, pos:tuple[int, int]=(0,0)) -> None:
         self._pos = pos
+    
+    @property
+    def center(self) -> tuple[int, int]:
+        center_x = self._pos[0] + (self.image.get_width()/2)
+        center_y = self._pos[1] + (self.image.get_height()/2)
+        return (center_x, center_y)
     
     @property
     def origin(self):
@@ -33,13 +44,12 @@ class Entity(pygame.sprite.Sprite):
     
     @scale.setter
     def scale(self, scale:tuple[int, int]=(32, 32)):
-        self._base_image = pygame.transform.scale(self._base_image, scale)
         self._scale = scale
     
     @property
     def image(self) -> pygame.Surface:
-        image = pygame.transform.rotate(self._base_image, self._angle)
-        image = pygame.transform.scale(self._base_image, (self._scale[0], self._scale[1]))
+        image = pygame.transform.scale(self._base_image, self._scale)
+        image = pygame.transform.rotate(image, self._angle)
         return image
     
     @image.setter

@@ -45,4 +45,5 @@ class Dood(Entity):
         self.last_update:float = u_time
         
         # behaviors effect position, angle
+        self.turnLeft(deltatime)
         self.moveForward(deltatime)
