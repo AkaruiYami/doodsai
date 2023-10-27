@@ -26,8 +26,8 @@ class Entity(pygame.sprite.Sprite):
     
     @property
     def center(self) -> tuple[int, int]:
-        center_x = self._pos[0] + (self.image.get_width()/2)
-        center_y = self._pos[1] + (self.image.get_height()/2)
+        center_x = self._pos[0] - (self.image.get_width()/2)
+        center_y = self._pos[1] - (self.image.get_height()/2)
         return (center_x, center_y)
     
     @property
@@ -55,7 +55,7 @@ class Entity(pygame.sprite.Sprite):
     @image.setter
     def image(self, image_path:str="") -> None:
         self._filepath = image_path
-        self._base_image = pygame.image.load(image_path)
+        self._base_image = pygame.image.load(image_path).convert_alpha()
         self._base_image = pygame.transform.scale(self._base_image, self.scale)
         rescale_x = int(self._base_image.get_width() * self._scale[0])
         rescale_y = int(self._base_image.get_height() * self._scale[1])
@@ -63,7 +63,7 @@ class Entity(pygame.sprite.Sprite):
     
     @property
     def rect(self) -> pygame.rect.Rect:
-        return pygame.transform.rotate(self._base_image, self._angle).get_rect()
+        return self.image.get_rect(center=(self.image.get_width()/2, self.image.get_height()/2))
 
     @property
     def angle(self) -> float:
@@ -71,8 +71,6 @@ class Entity(pygame.sprite.Sprite):
 
     @angle.setter
     def angle(self, angle:float) -> None:
-        if not 0 <= angle <= 360: 
-            raise Exception("setAngle(float) must be float between 0 and 360")
         self._angle = angle
         self._angle = self._angle % 360
 

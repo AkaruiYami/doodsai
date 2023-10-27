@@ -8,11 +8,12 @@ class TestFood(Entity):
         super(TestFood, self).__init__()
         self.image = "./assets/food_v1-01.png"
         self.scale = scale
+        self.origin = self.center
         self._max_energy:float = max_energy
         self._grow_rate:float = grow_rate
         self._growth:float = 0.0
         self._energy:float = 0
-    
+
     @property
     def growth(self):
         return self._growth
