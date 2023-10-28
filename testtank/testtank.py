@@ -2,14 +2,14 @@
 #   testtank/tank.py
 #
 
-import os
-os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import time
+import random
+import os
 import pygame
 from pygame.locals import *
-from testfood import TestFood
-from testdood import TestDood
-import random
+from food import Food
+from dood import Dood
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 
 ### Display Setting
 main_width = 800
@@ -23,9 +23,9 @@ fps_clock = pygame.time.Clock()
 fps_lock = 60
 
 ### DEBUG FLAGS
-DEBUG_DRAW_RECTS = True
+DEBUG_DRAW_RECTS = False
 DEBUG_DRAW_COLLISION_MASKS = False
-DEBUG_DRAW_ORIGIN_POINT = True
+DEBUG_DRAW_ORIGIN_POINT = False
 
 ### GROUPS
 doods = pygame.sprite.Group()
@@ -33,26 +33,24 @@ foods = pygame.sprite.Group()
 
 def renderEntity(entity) -> None:
     main_screen.blit(entity.image, entity.center)
-    
+
     if DEBUG_DRAW_COLLISION_MASKS:
         main_screen.blit(entity.drawMask(), entity.center)
-        
+
     if DEBUG_DRAW_RECTS:
         w, h = entity.image.get_width()+1, entity.image.get_height()+1
-        rect_surf = pygame.surface.Surface(size=(w, h))
+        rect_surf = pygame.Surface(size=(w, h))
         rect_surf.set_colorkey((0, 0, 0))
         pygame.draw.rect(rect_surf, (0, 255, 255), entity._rect, 1)
         main_screen.blit(rect_surf, entity.center)
-    
+
     if DEBUG_DRAW_ORIGIN_POINT:
-        rect_surf = pygame.surface.Surface(size=(3, 3))
+        rect_surf = pygame.Surface(size=(3, 3))
         rect_surf.set_colorkey((0, 0, 0))
         pygame.draw.circle(rect_surf, (0, 255, 0), (1, 1), 1, 1)
-        main_screen.blit(rect_surf, entity.center)
-        
-    
-    
-### RENDERING    
+        main_screen.blit(rect_surf, entity.pos)
+
+### RENDERING
 def render():
     main_screen.fill((45, 45, 45))
     
@@ -83,7 +81,7 @@ def collisionHandler() -> None:
 ### STARTUP POPULATION
 def populate(num_foods:int=0, num_doods:int=0):
     for i in range(num_foods):
-        new_food = TestFood(
+        new_food = Food(
             grow_rate=0.1,
             max_energy=50,
         )
@@ -92,21 +90,21 @@ def populate(num_foods:int=0, num_doods:int=0):
         foods.add(new_food)
         
     for i in range(num_doods):
-        new_dood = TestDood(speed_mult=7.5)
+        new_dood = Dood(speed_mult=7.5)
         new_dood.pos  = (random.randint(0, main_width - new_food.size[0]),
                          random.randint(0, main_height - new_food.size[1]))
         doods.add(new_dood)
 
 def testPopulate():
     for i in range(0, main_height, 15):
-        new_food = TestFood(
+        new_food = Food(
             grow_rate=1.0,
             max_energy=50
         )
         new_food.pos = (main_width/2 - new_food.size[0], i)
         foods.add(new_food)
     
-    testDood = TestDood(speed_mult=30.0)
+    testDood = Dood(speed_mult=30.0)
     testDood.pos = (main_width/2, main_height/2 - 3)
     testDood.movingForward = True
     testDood.movingLeft = True

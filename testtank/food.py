@@ -1,11 +1,16 @@
-###
-#   testtank/testfood.py
-#
-from testentity import Entity
+'''
+    testtank/food.py
+'''
+from entity import Entity
 
-class TestFood(Entity):
-    def __init__(self, grow_rate:float=0.01, max_energy:int=50, scale:tuple[int, int]=(16, 16)):
-        super(TestFood, self).__init__()
+class Food(Entity):
+    '''
+        Food sprite that grows at a set rate and contains energy based on
+        growth. Just here for the Dood()s to eat.
+    '''
+    def __init__(self, grow_rate:float=0.01, max_energy:int=50,
+                 scale:tuple[int, int]=(16, 16)):
+        super().__init__()
         self.scale = scale
         self.image = "./assets/food_v1-01.png"
         self._max_energy:float = max_energy
@@ -16,21 +21,30 @@ class TestFood(Entity):
 
     @property
     def growth(self):
+        '''Return current growth of Food().
+        Returns float - value from 0.0 - 1.0'''
         return self._growth
-    
+
     @property
     def energy(self):
+        '''Return current energy of Food().
+        Returns float - current energy value.'''
         return self._energy
-    
+
     def update(self, u_time):
+        '''update states of Food() given a time of call.
+        @u_time:float - time of update() call.'''
         deltatime = u_time - self._last_update
-        if self._growth < 1.0: self.grow(deltatime)
-        
+        if self._growth < 1.0:
+            self._grow(deltatime)
+
         self._last_update = u_time
-        
-    def grow(self, deltatime):
+
+    def _grow(self, deltatime):
+        '''Grow the food the amount it should given the deltatime.
+        @deltatime: float - value should be passed from update()'''
         self._growth += self._grow_rate * deltatime
-        if self._growth > 1.0: self._growth = 1.0
+        self._growth = min(self._growth, 1.0)
         if self._growth == 1.0: # growth state 100%
             self._energy = self._max_energy
             self.scale = (16, 16)
@@ -51,3 +65,4 @@ class TestFood(Entity):
             self._energy = 0
         else: # well thats an issue for future me.
             pass
+        
