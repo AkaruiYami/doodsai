@@ -26,6 +26,7 @@ fps_lock = 60
 DEBUG_DRAW_RECTS = True
 DEBUG_DRAW_COLLISION_MASKS = False
 DEBUG_DRAW_ORIGIN_POINT = True
+DEBUG_DRAW_DOOD_DETECTION_CIRCLE = True
 
 ### GROUPS
 doods = pygame.sprite.Group()
@@ -47,10 +48,16 @@ def renderEntity(entity) -> None:
     if DEBUG_DRAW_ORIGIN_POINT:
         rect_surf = pygame.surface.Surface(size=(3, 3))
         rect_surf.set_colorkey((0, 0, 0))
-        pygame.draw.circle(rect_surf, (0, 255, 0), (1, 1), 1, 1)
-        main_screen.blit(rect_surf, entity.center)
+        pygame.draw.circle(rect_surf, (0, 255, 0), (0, 0), 1, 1)
+        main_screen.blit(rect_surf, entity.pos)
         
-    
+    if DEBUG_DRAW_DOOD_DETECTION_CIRCLE and isinstance(entity, TestDood):
+        r = entity.area_detection.radius
+        rect_surf = pygame.surface.Surface(size=(2*r, 2*r))
+        rect_surf.set_colorkey((0, 0, 0))
+        center = (entity.pos[0] - r, entity.pos[1] - r)
+        pygame.draw.circle(rect_surf, (255, 50, 0), (r, r), r, 1)
+        main_screen.blit(rect_surf, center)
     
 ### RENDERING    
 def render():
@@ -70,15 +77,28 @@ def update(timer):
         if dood.alive: dood.update(timer)
         else: doods.remove(dood)
 
+# check if an entity enter TestDood area
+# this suppose to check if there is food enter dood area
+# but I somehow hate this
+# but I kinda like it at the same time
+def doodsDetection(dood: TestDood, food):
+    enter = dood.area_detection.enterArea(food)
+    leave = dood.area_detection.leaveArea(food)
+    if enter:
+        dood.sayHello(food)
+    if leave:
+        dood.sayBye(food)
+    return enter
+
 ### COLLISION HANDLING
 def collisionHandler() -> None:
+    nearest_food = pygame.sprite.groupcollide(doods, foods, False, False, doodsDetection) # this is to check if there is any food around doods
     close_food = pygame.sprite.groupcollide(foods, doods, True, False, pygame.sprite.collide_mask)
-    if not close_food:
-        return
-    
-    for food in close_food.keys():
-        print(f"Get eaten boiiii! {food}")
-        food.alive = False
+
+    if close_food:
+        for food in close_food.keys():
+            print(f"Get eaten boiiii! {food}")
+            food.alive = False
 
 ### STARTUP POPULATION
 def populate(num_foods:int=0, num_doods:int=0):
@@ -131,6 +151,8 @@ if __name__ == "__main__":
                     DEBUG_DRAW_COLLISION_MASKS = not DEBUG_DRAW_COLLISION_MASKS
                 if event.key == K_3:
                     DEBUG_DRAW_ORIGIN_POINT = not DEBUG_DRAW_ORIGIN_POINT
+                if event.key == K_4:
+                    DEBUG_DRAW_DOOD_DETECTION_CIRCLE = not DEBUG_DRAW_DOOD_DETECTION_CIRCLE
         
         update(perf_timer)
         render()

@@ -1,6 +1,7 @@
 ###
 #   testtank/testdood.py
 #
+import detection_component as components
 from testentity import Entity
 from doodbrain import Brain
 import math
@@ -23,6 +24,9 @@ class TestDood(Entity):
         self._moving_backward:bool = False
         self._moving_left:bool = False
         self._moving_right:bool = False
+        
+        # additional component
+        self.area_detection = components.CircleAreaDetection(self, 35)
 
         # TODO Currently needing input callbacks and output callbacks
         #   these will probably be defines as self._state_<whatevers>
@@ -86,3 +90,10 @@ class TestDood(Entity):
 
     def turnRight(self, deltatime:float) -> None:
         self.angle += self._attr_speed * deltatime * self._speed_mult
+
+    def sayHello(self, other: Entity) -> None:
+        '''Just placeholder method to see if can say hello to outside entity'''
+        print(f"Dood say hello to {other}")
+    
+    def sayBye(self, other: Entity):
+        print(f"Dood say bye bye to {other}")
