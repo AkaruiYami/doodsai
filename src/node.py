@@ -8,11 +8,10 @@ class Node():
         Braincell within the brain, calculates information and passes it along.
     '''
     def __init__(self, node_type:int=0, parent_callback=None):
-        self._parent_callback = parent_callback
+        self.parent_callback = parent_callback
         self._node_type = node_type
         self._inputs = [] # list of dicts: {"node": Node(), "weight": float}
         self._bias = 0.0
-        self._sum = 0
 
     @property
     def inputs(self):
@@ -47,9 +46,9 @@ class Node():
         Output nodes always calculate as sigmoid.
         Hidden layer nodes can be any of the 11 different types.
         Returns float -- final calculation'''
-        calc_sum = self._sum
+        calc_sum = 0
         if self._node_type == 0:
-            return calc_sum
+            return self.parent_callback()
 
         for node in self._inputs:
             calc_sum += node["node"].calc() + node["weight"]

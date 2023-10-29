@@ -87,9 +87,11 @@ def doodsDetection(dood: Dood, food):
     enter = dood.area_detection.enterArea(food)
     leave = dood.area_detection.leaveArea(food)
     if enter:
-        dood.sayHello(food)
+        pass
+        #dood.sayHello(food)
     if leave:
-        dood.sayBye(food)
+        pass
+        #dood.sayBye(food)
     return enter
 
 ### COLLISION HANDLING
@@ -98,7 +100,8 @@ def collisionHandler() -> None:
     close_food = pygame.sprite.groupcollide(foods, doods, True, False, pygame.sprite.collide_mask)
 
     if close_food:
-        for food in close_food.keys():
+        for food, dood in close_food.items():
+            dood[0].collision(food)
             print(f"Get eaten boiiii! {food}")
             food.alive = False
 
@@ -117,6 +120,7 @@ def populate(num_foods:int=0, num_doods:int=0):
         new_dood = Dood(speed_mult=7.5)
         new_dood.pos  = (random.randint(0, main_width - new_food.size[0]),
                          random.randint(0, main_height - new_food.size[1]))
+        new_dood.angle = random.randint(0, 359)
         doods.add(new_dood)
 
 def testPopulate():
@@ -136,8 +140,8 @@ def testPopulate():
 
 ### MAIN LOOP
 if __name__ == "__main__":
-    #populate(num_foods=20, num_doods=10)
-    testPopulate()
+    populate(num_foods=30, num_doods=20)
+    #testPopulate()
     while main_running:
         perf_timer = time.perf_counter()
         

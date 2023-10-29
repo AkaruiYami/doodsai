@@ -3,26 +3,28 @@
 '''
 import detection_component as components
 import math
-from doodbrain import Brain
+import pygame.math
+from brain import Brain
 from entity import Entity
+from food import Food
 
 class Dood(Entity):
     '''TestDood class so I don't break the Dood class.
     Consists of attributes, behaviors, and functions of Dood().'''
 
     def __init__(self, scale:tuple[int, int]=(32, 32),
-                 speed_mult:float=1.0) -> None:
+                 speed_mult:float=1.0, sense_range:int=35) -> None:
         super().__init__()
         self.scale = scale
         self.image = "./assets/dood_v3-01.png"
         self.origin = self.center
         self._speed_mult = speed_mult
-        self.area_detection = components.CircleAreaDetection(self, 35)
 
         # 'Physical' attributes
         self._attr_speed:float = 1.0
         self._attr_size:float = 1.0
         self._attr_sense:float = 1.0
+        self.area_detection = components.CircleAreaDetection(self, sense_range * self._attr_sense)
 
         # Internal Attributes // senses
         self._energy:float = 100.0
@@ -48,9 +50,22 @@ class Dood(Entity):
 
         # TODO Currently needing input callbacks and output callbacks
         # Brain init
-        inputs = []
-        output = []
-        self._brain = Brain(connections=10)
+        inputs = [
+            self.getStateAngleToFood,
+            self.getStateDistToFood,
+            self.getStateTimeAlive,
+            self.getStateTimeSinceAte,
+            self.getStateTimeChronometerA,
+            self.getStateTimeOscA
+            ]
+        outputs = [
+            self.setMovingForward,
+            self.setMovingBackward,
+            self.setMovingLeft,
+            self.setMovingRight
+            ]
+        self._brain = Brain(connections=10, 
+                            inputs=inputs, outputs=outputs, new=True)
 
     @property
     def size(self):
@@ -87,26 +102,22 @@ class Dood(Entity):
         '''Return bool for state of turning right (clockwise).'''
         return self._moving_right
 
-    @movingForward.setter
-    def movingForward(self, isit:bool) -> None:
+    def setMovingForward(self, isit:bool) -> None:
         '''Set state of moving Forward.
         @isit: bool'''
         self._moving_forward = isit
 
-    @movingBackward.setter
-    def movingBackward(self, isit:bool) -> None:
+    def setMovingBackward(self, isit:bool) -> None:
         '''Set state of moving backward.
         @isit: bool'''
         self._moving_backward = isit
-    @movingLeft.setter
 
-    def movingLeft(self, isit:bool) -> None:
+    def setMovingLeft(self, isit:bool) -> None:
         '''Set state of moving left (counter-clockwise).
         @isit: bool'''
         self._moving_left = isit
 
-    @movingRight.setter
-    def movingRight(self, isit:bool) -> None:
+    def setMovingRight(self, isit:bool) -> None:
         '''Set state of turning right (clockwise).
         @isit: bool'''
         self._moving_right = isit
@@ -126,28 +137,25 @@ class Dood(Entity):
         if self.movingRight:
             self._turnRight(deltatime)
 
-        self._time_alive += u_time
-        self._time_since_last_ate += u_time        
-        self._time_chronometer_a += u_time
-        self._time_osc_a += u_time
+        self._time_alive += deltatime
+        self._time_since_last_ate += deltatime        
+        self._time_chronometer_a += deltatime
+        self._time_osc_a += deltatime
 
         self._time_osc_a %= self._time_reset_osc_a
         self._time_chronometer_a %= self._time_reset_chronometer_a
 
         self._last_update = u_time
+        self._spendEnergy(deltatime)
+        
+        self._brain.process()
+        
+        if self._energy <= 0:
+            self.alive = False
 
-    def _lookForFood(self, list_foods:list) -> None:
-        '''Check all global foods within provided list. Return the nearest one
-        as long as it is within Dood().sense.
-        @list_foods: list of class Food()'''
-        # for each dood, get dist to dood.pos
-        pass
-
-    def _lookForDood(self, list_doods:list) -> None:
-        '''Check all global doods within provided list. Return the nearest one
-        as long as it is within Dood().sense.
-        @list_doods: list of class Dood()'''
-        pass
+    def collision(self, entity:Entity):
+        if isinstance(entity, Food):
+            self.eatFood(entity.energy)
 
     ### BEHAVIORS
     def eatFood(self, value:float):
@@ -155,6 +163,7 @@ class Dood(Entity):
         value of energy stored within that Food().
         @value: float - obtained from Food().energy'''
         self._energy += value
+        self._energy = min(self._energy, self._max_energy)
         self._time_since_last_ate = 0.0
 
     def _moveForward(self, deltatime:float) -> None:
@@ -192,18 +201,39 @@ class Dood(Entity):
     def sayBye(self, other: Entity):
         print(f"Dood say bye bye to {other}")
 
+    def _spendEnergy(self, deltatime:float) -> None:
+        '''Spend energy to live, more if self is moving and burning that energy.'''
+        if self.movingBackward or self.movingForward or self.movingLeft or self.movingRight:
+            self._energy -= deltatime * 1.10 * self._attr_speed
+        else:
+            self._energy -= deltatime 
+        
     ### STATES --
     # not properties so they can be called back by children instances
     # (ie the Brain())
     def getStateDistToFood(self) -> float:
         '''Get distance of self to nearest Food().
         Returns float.'''
-        return self._dist_to_food
+        valid_ents = [ent for ent in self.area_detection.entities_inside if isinstance(ent, Food)]
+        return -1 if not valid_ents else min([math.dist(e.pos, self.pos) for e in valid_ents])
 
     def getStateDistToDood(self) -> float:
         '''Get disntance of self to nearest Dood().
         Returns float.'''
-        return self._dist_to_dood
+        valid_ents = [ent for ent in self.area_detection.entities_inside if isinstance(ent, Dood)]
+        return -1 if not valid_ents else min([math.dist(valid_ents.pos, self.pos) for e in valid_ents])
+
+    def  getStateAngleToFood(self) -> float:
+        '''Get angle to the nearest food. Not relative to self.angle'''
+        valid_ents = [ent for ent in self.area_detection.entities_inside if isinstance(ent, Food)]
+        valid_ents.sort(key=lambda e: math.dist(self.pos, e.pos))
+        return pygame.math.Vector2(self.pos).angle_to(valid_ents[0].pos) if valid_ents else self.angle
+
+    def getStateAngleToDood(self) -> float:
+        '''Get angle to the nearest dood. Not relative to self.angle'''
+        valid_ents = [ent for ent in self.area_detection.entities_inside if isinstance(ent, Dood)]
+        valid_ents.sort(key=lambda e: math.dist(self.pos, e.pos))
+        return pygame.math.Vector2(self.pos).angle_to(valid_ents[0].pos) if valid_ents else self.angle
 
     def getStateTimeAlive(self) -> float:
         '''Get time in milliseconds self has been alive since init().
