@@ -9,6 +9,7 @@ import pygame
 from pygame.locals import *
 from food import Food
 from dood import Dood
+from entity import Entity
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 
 ### Display Setting
@@ -54,7 +55,7 @@ def renderEntity(entity) -> None:
         pygame.draw.circle(rect_surf, (0, 255, 0), (0, 0), 1, 1)
         main_screen.blit(rect_surf, entity.pos)
         
-    if DEBUG_DRAW_DOOD_DETECTION_CIRCLE and isinstance(entity, TestDood):
+    if DEBUG_DRAW_DOOD_DETECTION_CIRCLE and isinstance(entity, Dood):
         r = entity.area_detection.radius
         rect_surf = pygame.surface.Surface(size=(2*r, 2*r))
         rect_surf.set_colorkey((0, 0, 0))
@@ -62,8 +63,6 @@ def renderEntity(entity) -> None:
         pygame.draw.circle(rect_surf, (255, 50, 0), (r, r), r, 1)
         main_screen.blit(rect_surf, center)  
 
-        pygame.draw.circle(rect_surf, (0, 255, 0), (1, 1), 1, 1)
-        main_screen.blit(rect_surf, entity.pos)
 
 ### RENDERING
 
@@ -84,28 +83,30 @@ def update(timer):
         if dood.alive: dood.update(timer)
         else: doods.remove(dood)
 
-# check if an entity enter TestDood area
-# this suppose to check if there is food enter dood area
-# but I somehow hate this
-# but I kinda like it at the same time
-def doodsDetection(dood: TestDood, food):
-    enter = dood.area_detection.enterArea(food)
-    leave = dood.area_detection.leaveArea(food)
+# check if an entity enter Dood area
+def doodsDetection(dood: Dood, other: Entity):
+    enter = dood.area_detection.enterArea(other)
+    leave = dood.area_detection.leaveArea(other)
     if enter:
-        dood.sayHello(food)
+        dood.sayHello(other)
     if leave:
-        dood.sayBye(food)
+        dood.sayBye(other)
     return enter
 
 ### COLLISION HANDLING
 def collisionHandler() -> None:
-    nearest_food = pygame.sprite.groupcollide(doods, foods, False, False, doodsDetection) # this is to check if there is any food around doods
-    close_food = pygame.sprite.groupcollide(foods, doods, True, False, pygame.sprite.collide_mask)
+    nearest_foods = pygame.sprite.groupcollide(doods, foods, False, False, doodsDetection) # this is to check if there is any food around doods
+    nearest_doods = pygame.sprite.groupcollide(doods, doods, False, False, doodsDetection) # this is to check if there is any other doods around
+    # I suck at naming variables. 
+    # also, I change the argument position so that it return Dood:list[Food] instead of Food:list[Dood]
+    foods_collide = pygame.sprite.groupcollide(doods, foods, False, True, pygame.sprite.collide_mask) 
 
-    if close_food:
-        for food in close_food.keys():
-            print(f"Get eaten boiiii! {food}")
-            food.alive = False
+    for dood in foods_collide:
+        print(f"{dood} ate {foods_collide[dood]}")
+        # since it return a list of foods, i think getting the total amount of energy should do the job
+        # this might happen if dood spawn on multiple food resulting it ate them simultaneously
+        total_energy = sum(food.energy for food in foods_collide[dood]) 
+        dood.eatFood(total_energy)
 
 ### STARTUP POPULATION
 def populate(num_foods:int=0, num_doods:int=0):
@@ -133,11 +134,11 @@ def testPopulate():
         new_food.pos = (main_width/2 - new_food.size[0], i)
         foods.add(new_food)
     
-    testDood = Dood(speed_mult=30.0)
-    testDood.pos = (main_width/2, main_height/2 - 3)
-    testDood.movingForward = True
-    testDood.movingLeft = True
-    doods.add(testDood)
+    test_dood = Dood(speed_mult=30.0)
+    test_dood.pos = (main_width/2, main_height/2 - 3)
+    test_dood.movingForward = True
+    test_dood.movingLeft = True
+    doods.add(test_dood)
 
 ### MAIN LOOP
 if __name__ == "__main__":
