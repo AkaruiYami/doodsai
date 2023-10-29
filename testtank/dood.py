@@ -191,7 +191,7 @@ class Dood(Entity):
 
     def sayBye(self, other: Entity):
         print(f"Dood say bye bye to {other}")
-        
+
     ### STATES --
     # not properties so they can be called back by children instances
     # (ie the Brain())
