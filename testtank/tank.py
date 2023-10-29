@@ -54,7 +54,7 @@ def renderEntity(entity) -> None:
         pygame.draw.circle(rect_surf, (0, 255, 0), (0, 0), 1, 1)
         main_screen.blit(rect_surf, entity.pos)
         
-    if DEBUG_DRAW_DOOD_DETECTION_CIRCLE and isinstance(entity, TestDood):
+    if DEBUG_DRAW_DOOD_DETECTION_CIRCLE and isinstance(entity, Dood):
         r = entity.area_detection.radius
         rect_surf = pygame.surface.Surface(size=(2*r, 2*r))
         rect_surf.set_colorkey((0, 0, 0))
@@ -88,7 +88,7 @@ def update(timer):
 # this suppose to check if there is food enter dood area
 # but I somehow hate this
 # but I kinda like it at the same time
-def doodsDetection(dood: TestDood, food):
+def doodsDetection(dood: Dood, food):
     enter = dood.area_detection.enterArea(food)
     leave = dood.area_detection.leaveArea(food)
     if enter:

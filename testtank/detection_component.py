@@ -2,8 +2,7 @@ from typing import Optional
 from abc import ABC
 
 import pygame
-from testentity import Entity
-
+from entity import Entity
 
 class BaseAreaDetection(ABC):
     def __init__(self, body: Entity):
@@ -17,7 +16,6 @@ class BaseAreaDetection(ABC):
     def leaveArea(self, body: Entity) -> bool:
         """Return True if an Entity leave the area"""
         ...
-
 
 class CircleAreaDetection(BaseAreaDetection):
     def __init__(self, body: Entity, radius: float):
