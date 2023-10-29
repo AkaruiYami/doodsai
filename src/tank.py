@@ -1,6 +1,6 @@
-###
-#   testtank/tank.py
-#
+'''
+    testtank/tank.py
+'''
 
 import time
 import random
@@ -29,11 +29,11 @@ DEBUG_DRAW_ORIGIN_POINT = True
 DEBUG_DRAW_DOOD_DETECTION_CIRCLE = True
 DEBUG_DRAW_ORIGIN_POINT = False
 
-
 ### GROUPS
 doods = pygame.sprite.Group()
 foods = pygame.sprite.Group()
 
+### RENDERING
 def renderEntity(entity) -> None:
     main_screen.blit(entity.image, entity.center)
 
@@ -62,11 +62,6 @@ def renderEntity(entity) -> None:
         pygame.draw.circle(rect_surf, (255, 50, 0), (r, r), r, 1)
         main_screen.blit(rect_surf, center)  
 
-        pygame.draw.circle(rect_surf, (0, 255, 0), (1, 1), 1, 1)
-        main_screen.blit(rect_surf, entity.pos)
-
-### RENDERING
-
 def render():
     main_screen.fill((45, 45, 45))
     
@@ -84,7 +79,7 @@ def update(timer):
         if dood.alive: dood.update(timer)
         else: doods.remove(dood)
 
-# check if an entity enter TestDood area
+# check if an entity enter Dood area
 # this suppose to check if there is food enter dood area
 # but I somehow hate this
 # but I kinda like it at the same time
