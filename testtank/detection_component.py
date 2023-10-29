@@ -1,8 +1,6 @@
-from typing import Optional
-from abc import ABC
+from abc import ABC, abstractmethod
 
-import pygame
-from testentity import Entity
+from entity import Entity
 
 
 class BaseAreaDetection(ABC):
@@ -10,10 +8,12 @@ class BaseAreaDetection(ABC):
         self.body: Entity = body
         self.entities_inside: set[Entity] = set()
 
+    @abstractmethod
     def enterArea(self, body: Entity) -> bool:
         """Return True if an Entity enter the area"""
         ...
 
+    @abstractmethod
     def leaveArea(self, body: Entity) -> bool:
         """Return True if an Entity leave the area"""
         ...
