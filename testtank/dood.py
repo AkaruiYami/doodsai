@@ -1,6 +1,7 @@
 '''
    testtank/testdood.py
 '''
+import detection_component as components
 import math
 from doodbrain import Brain
 from entity import Entity
@@ -16,6 +17,7 @@ class Dood(Entity):
         self.image = "./assets/dood_v3-01.png"
         self.origin = self.center
         self._speed_mult = speed_mult
+        self.area_detection = components.CircleAreaDetection(self, 35)
 
         # 'Physical' attributes
         self._attr_speed:float = 1.0
@@ -182,6 +184,13 @@ class Dood(Entity):
         '''Update angle of Dood() to the right (clock-wise).
         @deltatime: float - recived during Dood.update() call.'''
         self.angle += self._attr_speed * deltatime * self._speed_mult
+
+    def sayHello(self, other: Entity) -> None:
+        '''Just placeholder method to see if can say hello to outside entity'''
+        print(f"Dood say hello to {other}")
+
+    def sayBye(self, other: Entity):
+        print(f"Dood say bye bye to {other}")
 
     ### STATES --
     # not properties so they can be called back by children instances
