@@ -102,7 +102,6 @@ def collisionHandler() -> None:
     if close_food:
         for food, dood in close_food.items():
             dood[0].collision(food)
-            print(f"Get eaten boiiii! {food}")
             food.alive = False
 
 ### STARTUP POPULATION

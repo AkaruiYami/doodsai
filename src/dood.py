@@ -4,6 +4,7 @@
 import detection_component as components
 import math
 import pygame.math
+import utils
 from brain import Brain
 from entity import Entity
 from food import Food
@@ -248,12 +249,12 @@ class Dood(Entity):
     def getStateTimeChronometerA(self) -> float:
         '''Get self time of chronometer in milliseconds.
         Returns float.'''
-        return self._time_chronometer_a
+        return utils.normalize(self._time_chronometer_a, 0, self._time_reset_chronometer_a)
 
     def getStateTimeOscA(self) -> float:
         '''Get self time of oscilator in milliseconds.
         Returns float.'''
-        return self._time_osc_a
+        return utils.normalize(self._time_osc_a, 0, self._time_reset_osc_a)
 
     def getStateMovingForward(self) -> float:
         '''Get state of self moving forward.
