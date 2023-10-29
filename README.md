@@ -21,7 +21,7 @@ I write a lot of this code @ twitch.tv/CodeNameTribbs, and welcome people who wa
 
 
 Special Thanks To:
-- __BrianlessSociety__ for being a regular viewer and pointing out my pythonic shortcomings!
+- __BrianlessSociety__ for being a regular viewer and pointing out my pythonic shortcomings! (helps me learn stuff)
 - __AkaruiYami__ for being a regular viewer and contributing to the project, fixing collision and giving the Doods the gift of SIGHT
 
 #### Project Notes & TODOS

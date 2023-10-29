@@ -1,7 +1,5 @@
-from typing import Optional
 from abc import ABC
 
-import pygame
 from entity import Entity
 
 class BaseAreaDetection(ABC):
@@ -39,7 +37,6 @@ class CircleAreaDetection(BaseAreaDetection):
             self.entities_inside.remove(other)
             return True
         return False
-
 
     def _isin_x(self, other: Entity):
         pos = self.body.pos[0]
