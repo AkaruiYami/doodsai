@@ -153,6 +153,7 @@ class Dood(Entity):
         
         if self._energy <= 0:
             self.alive = False
+            self.kill() # remove self from spritegroup a.k.a ded
 
     def collision(self, entity:Entity):
         if isinstance(entity, Food):

@@ -134,6 +134,7 @@ class Entity(pygame.sprite.Sprite):
         new_surf.set_colorkey((0, 0, 0))
         return new_surf
 
+    # It looks like we don't really use this method anywhere??? Need to double check
     def render(self) -> tuple[pygame.Surface, pygame.Rect]:
         '''Get current image and rect from entity for use in rendering to
         a pygame.Surface'''
