@@ -1,6 +1,6 @@
-###
-#   testtank/tank.py
-#
+'''
+    testtank/tank.py
+'''
 
 import time
 import random
@@ -30,45 +30,36 @@ DEBUG_DRAW_ORIGIN_POINT = True
 DEBUG_DRAW_DOOD_DETECTION_CIRCLE = True
 DEBUG_DRAW_ORIGIN_POINT = False
 
-
 ### GROUPS
 doods = pygame.sprite.Group()
 foods = pygame.sprite.Group()
 
+### RENDERING
 def renderEntity(entity) -> None:
     main_screen.blit(entity.image, entity.center)
+    rect_surf = pygame.Surface(main_screen.get_size())
+    rect_surf.set_colorkey((0,0,0))
 
     if DEBUG_DRAW_COLLISION_MASKS:
         main_screen.blit(entity.drawMask(), entity.center)
 
     if DEBUG_DRAW_RECTS:
-        w, h = entity.image.get_width()+1, entity.image.get_height()+1
-        rect_surf = pygame.Surface(size=(w, h))
-        rect_surf.set_colorkey((0, 0, 0))
-        pygame.draw.rect(rect_surf, (0, 255, 255), entity._rect, 1)
-        main_screen.blit(rect_surf, entity.center)
+        rect = entity.rect
+        rect = (rect.x + rect.w / 2, rect.y + rect.h / 2, rect.w, rect.h)
+        pygame.draw.rect(rect_surf, (0, 255, 255), rect, 1)
 
     if DEBUG_DRAW_ORIGIN_POINT:
-        rect_surf = pygame.Surface(size=(3, 3))
-        rect_surf.set_colorkey((0, 0, 0))
-
-        pygame.draw.circle(rect_surf, (0, 255, 0), (0, 0), 1, 1)
-        main_screen.blit(rect_surf, entity.pos)
+        pygame.draw.circle(rect_surf, (0, 255, 0), entity.pos, 1, 1)
         
     if DEBUG_DRAW_DOOD_DETECTION_CIRCLE and isinstance(entity, Dood):
         r = entity.area_detection.radius
-        rect_surf = pygame.surface.Surface(size=(2*r, 2*r))
-        rect_surf.set_colorkey((0, 0, 0))
-        center = (entity.pos[0] - r, entity.pos[1] - r)
-        pygame.draw.circle(rect_surf, (255, 50, 0), (r, r), r, 1)
-        main_screen.blit(rect_surf, center)  
-
-
-### RENDERING
+        pygame.draw.circle(rect_surf, (255, 50, 0), entity.pos, r, 1)
+    
+    main_screen.blit(rect_surf, (0, 0))
 
 def render():
     main_screen.fill((45, 45, 45))
-    
+
     for food in foods:
         renderEntity(food)
     for dood in doods:
@@ -76,21 +67,22 @@ def render():
 
 ### UPDATING
 def update(timer):
-    for food in foods:
-        if food.alive: food.update(timer)
-        else: foods.remove(food)
-    for dood in doods:
-        if dood.alive: dood.update(timer)
-        else: doods.remove(dood)
+    # Sprite group can call update method to all sprite inside it
+    # Easier to keep track of them since if we remove them from sprite groupa,
+    # it mean we vaporize them from existence
+    foods.update(timer)
+    doods.update(timer)
 
 # check if an entity enter Dood area
 def doodsDetection(dood: Dood, other: Entity):
     enter = dood.area_detection.enterArea(other)
     leave = dood.area_detection.leaveArea(other)
     if enter:
-        dood.sayHello(other)
+        pass
+        # dood.sayHello(other)
     if leave:
-        dood.sayBye(other)
+        pass
+        # dood.sayBye(other)
     return enter
 
 ### COLLISION HANDLING
@@ -106,7 +98,10 @@ def collisionHandler() -> None:
         # since it return a list of foods, i think getting the total amount of energy should do the job
         # this might happen if dood spawn on multiple food resulting it ate them simultaneously
         total_energy = sum(food.energy for food in foods_collide[dood]) 
-        dood.eatFood(total_energy)
+        # I use eatFood method here instead collision because it much easier
+        # and I dont have to check if the entity is a Food since it comfirm to be Food unless we put something else in food sprite group.
+        dood.eatFood(total_energy) 
+
 
 ### STARTUP POPULATION
 def populate(num_foods:int=0, num_doods:int=0):
@@ -123,6 +118,7 @@ def populate(num_foods:int=0, num_doods:int=0):
         new_dood = Dood(speed_mult=7.5)
         new_dood.pos  = (random.randint(0, main_width - new_food.size[0]),
                          random.randint(0, main_height - new_food.size[1]))
+        new_dood.angle = random.randint(0, 359)
         doods.add(new_dood)
 
 def testPopulate():
@@ -142,8 +138,8 @@ def testPopulate():
 
 ### MAIN LOOP
 if __name__ == "__main__":
-    #populate(num_foods=20, num_doods=10)
-    testPopulate()
+    populate(num_foods=30, num_doods=20)
+    #testPopulate()
     while main_running:
         perf_timer = time.perf_counter()
         

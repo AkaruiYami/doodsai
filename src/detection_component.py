@@ -18,7 +18,6 @@ class BaseAreaDetection(ABC):
         """Return True if an Entity leave the area"""
         ...
 
-
 class CircleAreaDetection(BaseAreaDetection):
     def __init__(self, body: Entity, radius: float):
         super().__init__(body)
@@ -41,7 +40,6 @@ class CircleAreaDetection(BaseAreaDetection):
             self.entities_inside.remove(other)
             return True
         return False
-
 
     def _isin_x(self, other: Entity):
         pos = self.body.pos[0]
