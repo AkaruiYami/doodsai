@@ -1,7 +1,13 @@
+<<<<<<< HEAD:testtank/detection_component.py
 from abc import ABC, abstractmethod
 
 from entity import Entity
 
+=======
+from abc import ABC
+
+from entity import Entity
+>>>>>>> 446b259d93f35fb5d5b34cf5ccf5d569a00690e0:src/detection_component.py
 
 class BaseAreaDetection(ABC):
     def __init__(self, body: Entity):
@@ -17,7 +23,6 @@ class BaseAreaDetection(ABC):
     def leaveArea(self, body: Entity) -> bool:
         """Return True if an Entity leave the area"""
         ...
-
 
 class CircleAreaDetection(BaseAreaDetection):
     def __init__(self, body: Entity, radius: float):
@@ -41,7 +46,6 @@ class CircleAreaDetection(BaseAreaDetection):
             self.entities_inside.remove(other)
             return True
         return False
-
 
     def _isin_x(self, other: Entity):
         pos = self.body.pos[0]

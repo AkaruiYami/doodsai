@@ -11,14 +11,15 @@
 [ ] Handle collision detection between doods & food
 
 Dood Specific:
-[ ] Collision detection for food
+[X] Collision detection for food
 [ ] Collision detection for other doods
-[ ] Spawning capabilities based on variables and collision
+[ ] Breeding capabilities based on variables and collision
 [ ] Fitness score
 [ ] Scaling attributes, size, speed, perception
 [ ] Color modulation based on attributes
 [X] Collison Mask
-
+[ ] Get their brain working and processing environment within 'sight'
+ 
 Food specific:
 [X] Class needs to be coded
 [X] Needs stages with energy variants based on growth stage
@@ -27,11 +28,10 @@ Food specific:
 
 Environment Specifics:
 [ ] Manage Start Variables, number of doods, number of food, max food, max doods, food spawn rate
-[ ] Spawn Food
-[ ] Contain Doods
+[ ] Spawn Food - currently on initial environment creation, need interval spawning
+[X] Contain Doods
 [ ] Size variables
 [ ] Contain entities in future builds, ie rocks and stuff.
-
 
 Collisions arent working properly,
 something to do with positions when created, offset is too much

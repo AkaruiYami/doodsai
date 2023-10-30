@@ -1,6 +1,6 @@
-###
-#   testtank/tank.py
-#
+'''
+    testtank/tank.py
+'''
 
 import time
 import random
@@ -30,11 +30,11 @@ DEBUG_DRAW_ORIGIN_POINT = True
 DEBUG_DRAW_DOOD_DETECTION_CIRCLE = True
 DEBUG_DRAW_ORIGIN_POINT = False
 
-
 ### GROUPS
 doods = pygame.sprite.Group()
 foods = pygame.sprite.Group()
 
+### RENDERING
 def renderEntity(entity) -> None:
     main_screen.blit(entity.image, entity.center)
 
@@ -63,9 +63,12 @@ def renderEntity(entity) -> None:
         pygame.draw.circle(rect_surf, (255, 50, 0), (r, r), r, 1)
         main_screen.blit(rect_surf, center)  
 
+<<<<<<< HEAD:testtank/tank.py
 
 ### RENDERING
 
+=======
+>>>>>>> 446b259d93f35fb5d5b34cf5ccf5d569a00690e0:src/tank.py
 def render():
     main_screen.fill((45, 45, 45))
     
@@ -84,6 +87,7 @@ def update(timer):
         else: doods.remove(dood)
 
 # check if an entity enter Dood area
+<<<<<<< HEAD:testtank/tank.py
 def doodsDetection(dood: Dood, other: Entity):
     enter = dood.area_detection.enterArea(other)
     leave = dood.area_detection.leaveArea(other)
@@ -91,6 +95,20 @@ def doodsDetection(dood: Dood, other: Entity):
         dood.sayHello(other)
     if leave:
         dood.sayBye(other)
+=======
+# this suppose to check if there is food enter dood area
+# but I somehow hate this
+# but I kinda like it at the same time
+def doodsDetection(dood: Dood, food):
+    enter = dood.area_detection.enterArea(food)
+    leave = dood.area_detection.leaveArea(food)
+    if enter:
+        pass
+        #dood.sayHello(food)
+    if leave:
+        pass
+        #dood.sayBye(food)
+>>>>>>> 446b259d93f35fb5d5b34cf5ccf5d569a00690e0:src/tank.py
     return enter
 
 ### COLLISION HANDLING
@@ -101,12 +119,19 @@ def collisionHandler() -> None:
     # also, I change the argument position so that it return Dood:list[Food] instead of Food:list[Dood]
     foods_collide = pygame.sprite.groupcollide(doods, foods, False, True, pygame.sprite.collide_mask) 
 
+<<<<<<< HEAD:testtank/tank.py
     for dood in foods_collide:
         print(f"{dood} ate {foods_collide[dood]}")
         # since it return a list of foods, i think getting the total amount of energy should do the job
         # this might happen if dood spawn on multiple food resulting it ate them simultaneously
         total_energy = sum(food.energy for food in foods_collide[dood]) 
         dood.eatFood(total_energy)
+=======
+    if close_food:
+        for food, dood in close_food.items():
+            dood[0].collision(food)
+            food.alive = False
+>>>>>>> 446b259d93f35fb5d5b34cf5ccf5d569a00690e0:src/tank.py
 
 ### STARTUP POPULATION
 def populate(num_foods:int=0, num_doods:int=0):
@@ -123,6 +148,7 @@ def populate(num_foods:int=0, num_doods:int=0):
         new_dood = Dood(speed_mult=7.5)
         new_dood.pos  = (random.randint(0, main_width - new_food.size[0]),
                          random.randint(0, main_height - new_food.size[1]))
+        new_dood.angle = random.randint(0, 359)
         doods.add(new_dood)
 
 def testPopulate():
@@ -142,8 +168,8 @@ def testPopulate():
 
 ### MAIN LOOP
 if __name__ == "__main__":
-    #populate(num_foods=20, num_doods=10)
-    testPopulate()
+    populate(num_foods=30, num_doods=20)
+    #testPopulate()
     while main_running:
         perf_timer = time.perf_counter()
         
