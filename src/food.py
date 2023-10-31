@@ -10,15 +10,15 @@ class Food(Entity):
     '''
     def __init__(self, grow_rate:float=0.01, max_energy:int=50,
                  scale:tuple[int, int]=(16, 16)):
-        super().__init__()
-        self.scale = scale
+        Entity.__init__(self, scale=scale)
         self.image = "./assets/food_v1-01.png"
         self._max_energy:float = max_energy
         self._grow_rate:float = grow_rate
         self._growth:float = 0.0
         self._energy:float = 0
         self.origin = self.center
-
+        self.scale = (0, 0)
+        
     @property
     def growth(self):
         '''Return current growth of Food().
@@ -63,6 +63,3 @@ class Food(Entity):
         elif self._growth >= 0.0: # growth state 0%
             self.scale = (0, 0)
             self._energy = 0
-        else: # well thats an issue for future me.
-            pass
-        

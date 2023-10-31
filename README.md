@@ -22,7 +22,7 @@ I write a lot of this code @ twitch.tv/CodeNameTribbs, and welcome people who wa
 
 Special Thanks To:
 - __BrianlessSociety__ for being a regular viewer and pointing out my pythonic shortcomings! (helps me learn stuff)
-- __AkaruiYami__ for being a regular viewer and contributing to the project, fixing collision and giving the Doods the gift of SIGHT
+- __AkaruiYami__ for being a regular viewer and contributing to the project, fixing collision and giving the Doods the gift of SIGHT and TOUCH (collision)
 
 #### Project Notes & TODOS
 - [X] sperate movement from fps
@@ -34,17 +34,16 @@ Special Thanks To:
 - [ ] observable food detection behavior
 
 Dood Specific:
-- [ ] neural network brain for doods
+- [X] neural network brain for doods
 - [ ] Handle collision detection between doods & doods
 - [x] Handle collision detection between doods & food
 - [X] Collision detection for food
-- [ ] Collision detection for other doods
 - [ ] Breeding capabilities based on variables and collision
 - [ ] Fitness score
 - [ ] Scaling attributes, size, speed, perception
 - [ ] Color modulation based on attributes
 - [X] Collison Mask
-- [ ] Get their brain working and processing environment within 'sight'
+- [X] Get their brain working and processing environment within 'sight'
  
 Food specific:
 - [X] Class needs to be coded
@@ -58,4 +57,5 @@ Environment Specifics:
 - [X] Contain Doods
 - [ ] Wider Range environment outside of window
 - [ ] Camera
+- [ ] Render only entities that are near camera
 - [ ] Contain entities in future builds, ie rocks and stuff.

@@ -14,7 +14,8 @@ class Dood(Entity):
     Consists of attributes, behaviors, and functions of Dood().'''
 
     def __init__(self, scale:tuple[int, int]=(32, 32),
-                 speed_mult:float=1.0, sense_range:int=35) -> None:
+                 speed_mult:float=1.0, sense_range:int=35,
+                 neurons:int=10) -> None:
         super().__init__()
         self.scale = scale
         self.image = "./assets/dood_v3-01.png"
@@ -65,7 +66,7 @@ class Dood(Entity):
             self.setMovingLeft,
             self.setMovingRight
             ]
-        self._brain = Brain(connections=10, 
+        self._brain = Brain(connections=neurons, 
                             inputs=inputs, outputs=outputs, new=True)
 
     @property
@@ -127,32 +128,33 @@ class Dood(Entity):
         '''Update states on every call, require an update time.
         Calculates time from last update to current call.
         @u_time:float'''
-        deltatime = u_time - self._last_update
-
-        if self.movingForward:
-            self._moveForward(deltatime)
-        if self.movingBackward:
-            self._moveBackward(deltatime)
-        if self.movingLeft:
-            self._turnLeft(deltatime)
-        if self.movingRight:
-            self._turnRight(deltatime)
-
-        self._time_alive += deltatime
-        self._time_since_last_ate += deltatime        
-        self._time_chronometer_a += deltatime
-        self._time_osc_a += deltatime
-
-        self._time_osc_a %= self._time_reset_osc_a
-        self._time_chronometer_a %= self._time_reset_chronometer_a
-
-        self._last_update = u_time
-        self._spendEnergy(deltatime)
-        
-        self._brain.process()
-        
         if self._energy <= 0:
-            self.alive = False
+            self.kill() # remove self from spritegroup a.k.a ded
+            
+        if self.alive:
+            deltatime = u_time - self._last_update 
+
+            if self.movingForward:
+                self._moveForward(deltatime)
+            if self.movingBackward:
+                self._moveBackward(deltatime)
+            if self.movingLeft:
+                self._turnLeft(deltatime)
+            if self.movingRight:
+                self._turnRight(deltatime)
+
+            self._time_alive += deltatime
+            self._time_since_last_ate += deltatime        
+            self._time_chronometer_a += deltatime
+            self._time_osc_a += deltatime
+
+            self._time_osc_a %= self._time_reset_osc_a
+            self._time_chronometer_a %= self._time_reset_chronometer_a
+
+            self._last_update = u_time
+            self._spendEnergy(deltatime)
+            
+            self._brain.process()
 
     def collision(self, entity:Entity):
         if isinstance(entity, Food):

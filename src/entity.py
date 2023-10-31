@@ -27,6 +27,16 @@ class Entity(pygame.sprite.Sprite):
         return (self.image.get_width(), self.image.get_height())
 
     @property
+    def width(self) -> int:
+        '''Return the width of the current image.'''
+        return self.image.get_width()
+    
+    @property
+    def height(self) -> int:
+        '''Return the height of the current image.'''
+        return self.image.get_height()
+
+    @property
     def pos(self) -> tuple[int, int]:
         '''Get the current position of the entity at top-left corner.
         Returns tuple(int, int) - x-coord, y-coord.'''
@@ -74,7 +84,8 @@ class Entity(pygame.sprite.Sprite):
     def image(self) -> pygame.Surface:
         '''Get image surface of entity at the set angle.
         Returns pygame.Surface - stored image after rotation of angle.'''
-        image = pygame.transform.rotate(self._base_image, self._angle)
+        image = pygame.transform.scale(self._base_image, self._scale)
+        image = pygame.transform.rotate(image, self._angle)
         self._rect = image.get_rect()
         return image
 
@@ -133,9 +144,4 @@ class Entity(pygame.sprite.Sprite):
                     pygame.draw.rect(new_surf, color, (x, y, 1, 1))
         new_surf.set_colorkey((0, 0, 0))
         return new_surf
-
-    def render(self) -> tuple[pygame.Surface, pygame.Rect]:
-        '''Get current image and rect from entity for use in rendering to
-        a pygame.Surface'''
-        return (self.image(), self.rect())
     
