@@ -60,7 +60,6 @@ def renderEntity(entity) -> None:
     
 def render():
     main_screen.fill((45, 45, 45))
-
     for food in foods:
         renderEntity(food)
     for dood in doods:
@@ -213,7 +212,7 @@ if __name__ == "__main__":
         # Display screen
         pygame.display.flip()
         fps_clock.tick(fps_lock)
-        print(f"{time.perf_counter() - perf_timer}")
+        #print(f"{time.perf_counter() - perf_timer}")
         
     # Exit App
     pygame.quit()

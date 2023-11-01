@@ -50,7 +50,6 @@ class Dood(Entity):
         self._moving_left:bool = False
         self._moving_right:bool = False
 
-        # TODO Currently needing input callbacks and output callbacks
         # Brain init
         inputs = [
             self.getStateAngleToFood,

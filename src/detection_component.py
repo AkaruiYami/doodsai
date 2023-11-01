@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 
 from entity import Entity
 
+
 class BaseAreaDetection(ABC):
     def __init__(self, body: Entity):
         self.body: Entity = body
