@@ -37,24 +37,24 @@ foods = pygame.sprite.Group()
 
 ### RENDERING
 def renderEntity(entity) -> None:
-    main_screen.blit(entity.image, entity.center)
+    main_screen.blit(entity.image, entity.rect)
     rect_surf = pygame.Surface(main_screen.get_size())
     rect_surf.set_colorkey((0,0,0))
 
     if DEBUG_DRAW_COLLISION_MASKS:
-        main_screen.blit(entity.drawMask(), entity.center)
+        main_screen.blit(entity.drawMask(), entity.rect)
 
     if DEBUG_DRAW_RECTS:
         rect = entity.rect
-        rect = (rect.x + rect.w / 2, rect.y + rect.h / 2, rect.w, rect.h)
+        #rect = (rect.x + rect.w / 2, rect.y + rect.h / 2, rect.w, rect.h)
         pygame.draw.rect(rect_surf, (0, 255, 255), rect, 1)
 
     if DEBUG_DRAW_ORIGIN_POINT:
-        pygame.draw.circle(rect_surf, (0, 255, 0), entity.pos, 1, 1)
+        pygame.draw.circle(rect_surf, (0, 255, 0), entity.center, 1, 1)
 
     if DEBUG_DRAW_DOOD_DETECTION_CIRCLE and isinstance(entity, Dood):
         r = entity.area_detection.radius
-        pygame.draw.circle(rect_surf, (255, 50, 0), entity.pos, r, 1)
+        pygame.draw.circle(rect_surf, (255, 50, 0), entity.center, r, 1)
 
     main_screen.blit(rect_surf, (0, 0))
     
@@ -186,7 +186,7 @@ if __name__ == "__main__":
         food_limit=50,
         dood_limit=50)
 
-    populate(num_foods=20, num_doods=30)
+    populate(num_foods=20, num_doods=10)
     while main_running:
         perf_timer = time.perf_counter()
 

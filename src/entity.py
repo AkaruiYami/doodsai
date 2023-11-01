@@ -111,8 +111,8 @@ class Entity(pygame.sprite.Sprite):
         image = self.image
         self._rect = image.get_rect()
         return image.get_rect(center=image.get_rect(
-            center=self.center
-        ).center)
+             center=self.center
+         ).center)
 
     @property
     def angle(self) -> float:

@@ -42,14 +42,14 @@ class CircleAreaDetection(BaseAreaDetection):
         return False
 
     def _isin_x(self, other: Entity):
-        pos = self.body.pos[0]
+        pos = self.body.center[0]
         x_range = (pos - self.radius, pos + self.radius)
         left = x_range[0] < other.rect.left < x_range[1]
         right = x_range[0] < other.rect.right < x_range[1]
         return left or right
 
     def _isin_y(self, other: Entity):
-        pos = self.body.pos[1]
+        pos = self.body.center[1]
         y_range = (pos - self.radius, pos + self.radius)
         top = y_range[0] < other.rect.top < y_range[1]
         bottom = y_range[0] < other.rect.bottom < y_range[1]
