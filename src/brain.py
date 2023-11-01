@@ -56,8 +56,6 @@ class Brain():
         to parent if threshold reached.
         '''
         for outNode in self._out_nodes:
-            dothething = False
-            if outNode.calc() > self._threshold:
-                dothething = True
+            dothething =outNode.calc() > self._threshold
             outNode.parent_callback(dothething)
-            #print(f"impulse is {outNode.calc()} so do {outNode.parent_callback} is {dothething}")
+            

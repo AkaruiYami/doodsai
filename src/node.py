@@ -57,32 +57,35 @@ class Node():
         # Node Types
         #   0 = input node (no back tracing)
         #   1 = ouput node (final data)
-        if self._node_type == 1: # Output node, always sigmoid
-            return 1 / (1 + math.exp(-calc_sum))
-        if self._node_type == 2: # Hidden node -- sigmoid
-            return 1 / (1 + math.exp(-calc_sum))
-        if self._node_type == 3: # Hidden node -- stable sigmoid
-            if calc_sum >= 0:
+        match self._node_type:
+            case 1: # Output node, always sigmoid
                 return 1 / (1 + math.exp(-calc_sum))
-            return 1 / (1 + math.exp(calc_sum))
-        if self._node_type == 4: # Hidden node -- linear
-            return calc_sum
-        if self._node_type == 5: # Hidden node -- square
-            return calc_sum ** 2
-        if self._node_type == 6: # Hidden node -- sinus
-            return math.sin(calc_sum)
-        if self._node_type == 7: # Hidden Node -- absolute
-            return abs(calc_sum)
-        if self._node_type == 8: # Hidden Node -- Reluctant
-            return max(0, calc_sum)
-        if self._node_type == 9: # Hidden Node -- Gaussian
-            return math.exp(-calc_sum ** 2)
-        if self._node_type == 10: # Hidden Node -- Sinc
-            if calc_sum == 0:
-                return 0
-            return math.sin(calc_sum) / calc_sum
-        if self._node_type == 11: # Hidden Node -- Swish
-            return calc_sum * (1 / (1 + math.exp(-calc_sum)))
-        if self._node_type == 12: # Hidden Node -- Tanh
-            return math.tanh(calc_sum)
+            case 2: # Hidden node -- sigmoid
+                return 1 / (1 + math.exp(-calc_sum))
+            case 3: # Hidden node -- stable sigmoid
+                if calc_sum >= 0:
+                    return 1 / (1 + math.exp(-calc_sum))
+                return 1 / (1 + math.exp(calc_sum))
+            case 4: # Hidden node -- linear
+                 return calc_sum
+            case 5: # Hidden node -- square
+                return calc_sum ** 2
+            case 6: # Hidden node -- sinus
+                return math.sin(calc_sum)
+            case 7: # Hidden Node -- absolute
+                return abs(calc_sum)
+            case 8: # Hidden Node -- Reluctant
+                return max(0, calc_sum)
+            case 9: # Hidden Node -- Gaussian
+                return math.exp(-calc_sum ** 2)
+            case 10: # Hidden Node -- Sinc
+                if calc_sum == 0:
+                    return 0
+                return math.sin(calc_sum) / calc_sum
+            case 11: # Hidden Node -- Swish
+                return calc_sum * (1 / (1 + math.exp(-calc_sum)))
+            case 12: # Hidden Node -- Tanh
+                return math.tanh(calc_sum)
+            case _: pass
+            
                                                                        

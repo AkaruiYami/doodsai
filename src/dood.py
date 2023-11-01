@@ -37,12 +37,14 @@ class Dood(Entity):
         self._dir_to_dood:float = -1 # if no dood
         self._time_reset_chronometer_a:float = 60.0
         self._time_reset_osc_a:float = 3.0
+        self._time_reset_think:float = 1.0
 
         # Internal timers
         self._time_alive:float = 0.0
         self._time_since_last_ate:float = 0.0
         self._time_chronometer_a:float = 0.0
         self._time_osc_a:float = 0.0
+        self._time_think:float = 0.0
 
         # Physical States
         self._moving_forward:bool = False
@@ -146,14 +148,16 @@ class Dood(Entity):
             self._time_since_last_ate += deltatime        
             self._time_chronometer_a += deltatime
             self._time_osc_a += deltatime
+            self._time_think += deltatime
 
             self._time_osc_a %= self._time_reset_osc_a
             self._time_chronometer_a %= self._time_reset_chronometer_a
+            if self._time_think > self._time_reset_think:
+                self._brain.process()
+                self._time_think %= self._time_reset_think
 
             self._last_update = u_time
             self._spendEnergy(deltatime)
-            
-            self._brain.process()
 
     def collision(self, entity:Entity):
         if isinstance(entity, Food):
@@ -189,12 +193,12 @@ class Dood(Entity):
     def _turnLeft(self, deltatime:float) -> None:
         '''Update angle of Dood() to the left (counter-clockwise).
         @deltatime: float - recieved during Dood.update() call.'''
-        self.angle -= self._attr_speed * deltatime * self._speed_mult
+        self.angle -= self._attr_speed/2 * deltatime * self._speed_mult
 
     def _turnRight(self, deltatime:float) -> None:
         '''Update angle of Dood() to the right (clock-wise).
         @deltatime: float - recived during Dood.update() call.'''
-        self.angle += self._attr_speed * deltatime * self._speed_mult
+        self.angle += self._attr_speed/2 * deltatime * self._speed_mult
 
     def sayHello(self, other: Entity) -> None:
         '''Just placeholder method to see if can say hello to outside entity'''

@@ -11,7 +11,8 @@ class Entity(pygame.sprite.Sprite):
     def __init__(self, position:tuple[int, int]=(0, 0), scale:tuple[int, int]=(32, 32)):
         super().__init__()
         self._filepath:str = None
-        self._base_image:pygame.Surface = None
+        self._base_image:pygame.Surface = pygame.surface.Surface((0, 0))
+        self._curr_image:pygame.Surface = None
         self._scale:tuple[int, int] = scale
         self._pos:tuple[int, int] = position
         self._origin:tuple[float, float] = (0, 0)
@@ -79,16 +80,15 @@ class Entity(pygame.sprite.Sprite):
         '''Set current scale of the entity.
         @scale : tuple(int, int) - width, height'''
         self._scale = scale
+        self._curr_image = pygame.transform.scale(self._base_image, scale)
 
     @property
     def image(self) -> pygame.Surface:
         '''Get image surface of entity at the set angle.
         Returns pygame.Surface - stored image after rotation of angle.'''
-        image = pygame.transform.scale(self._base_image, self._scale)
-        image = pygame.transform.rotate(image, self._angle)
-        self._rect = image.get_rect()
+        image = pygame.transform.rotate(self._curr_image, self._angle)
         return image
-
+    
     @image.setter
     def image(self, image_path:str="") -> None:
         '''Set the image of the entity to the given filepath of image.
@@ -100,9 +100,9 @@ class Entity(pygame.sprite.Sprite):
         '''
         self._filepath = image_path
         image = pygame.image.load(image_path).convert_alpha()
-        image = pygame.transform.scale(image, self.scale)
         self._base_image = image
-        self._rect = image.get_rect()
+        self._curr_image = pygame.transform.scale(image, self.scale)
+        # self._rect = image.get_rect()
 
     @property
     def rect(self) -> pygame.Rect:

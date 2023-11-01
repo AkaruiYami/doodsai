@@ -22,7 +22,7 @@ speed_multiplier = 10.0
 pygame.init()
 main_screen = pygame.display.set_mode((main_width, main_height), main_flags)
 fps_clock = pygame.time.Clock()
-fps_lock = 60
+fps_lock = 30
 
 ### DEBUG FLAGS
 DEBUG_DRAW_RECTS = False
@@ -163,7 +163,7 @@ def spawnFood():
     foods.add(new_food)
 
 def spawnDood():
-    new_dood = Dood(speed_mult=7.5, neurons=5)
+    new_dood = Dood(speed_mult=7.5, neurons=10)
     new_dood.pos = (random.randint(0, main_width - new_dood.scale[0]),
                         random.randint(0, main_height - new_dood.scale[1]))
     new_dood.angle = random.randint(0, 359)
@@ -186,7 +186,7 @@ if __name__ == "__main__":
         food_limit=50,
         dood_limit=50)
 
-    populate(num_foods=20, num_doods=20)
+    populate(num_foods=20, num_doods=30)
     while main_running:
         perf_timer = time.perf_counter()
 
@@ -212,7 +212,7 @@ if __name__ == "__main__":
         # Display screen
         pygame.display.flip()
         fps_clock.tick(fps_lock)
-        #print(f"{time.perf_counter() - perf_timer}")
+        print(f"{time.perf_counter() - perf_timer}")
         
     # Exit App
     pygame.quit()

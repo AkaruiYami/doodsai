@@ -34,32 +34,30 @@ class Food(Entity):
     def update(self, u_time):
         '''update states of Food() given a time of call.
         @u_time:float - time of update() call.'''
+        if not self.alive:
+            self.kill()
         deltatime = u_time - self._last_update
         if self._growth < 1.0:
             self._grow(deltatime)
-
-        self._last_update = u_time
+            self._last_update = u_time
 
     def _grow(self, deltatime):
         '''Grow the food the amount it should given the deltatime.
         @deltatime: float - value should be passed from update()'''
         self._growth += self._grow_rate * deltatime
         self._growth = min(self._growth, 1.0)
-        if self._growth == 1.0: # growth state 100%
-            self._energy = self._max_energy
-            self.scale = (16, 16)
-        elif self._growth >= 0.8: # growth state 80%
-            self.scale = (12, 12)
-            self._energy = self._max_energy * .8
-        elif self._growth >= 0.6: # growth state 60%
-            self.scale = (9, 9)
-            self._energy = self._max_energy * .6
-        elif self._growth >= 0.4: # grwoth state 40%
-            self.scale = (6, 6)
-            self._energy = self._max_energy * .4
-        elif self._growth >= 0.2: # growth state 20%
-            self.scale = (3, 3)
-            self._energy = self._max_energy * .2
-        elif self._growth >= 0.0: # growth state 0%
-            self.scale = (0, 0)
-            self._energy = 0
+        
+        growth_stages = [
+            (1.0, (16, 16), self._max_energy),
+            (0.8, (12, 12), self._max_energy * .8),
+            (0.6, (9, 9), self._max_energy * .6),
+            (0.4, (6, 6), self._max_energy * .4),
+            (0.2, (3, 3), self._max_energy * .2),
+            (0.0, (0, 0), 0)
+        ]
+        
+        for growth, scale, energy in (growth_stages):
+            if self._growth >= growth:
+                self.scale = scale
+                self._energy = energy
+                break
